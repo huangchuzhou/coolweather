@@ -42,6 +42,7 @@ public class CoolWeatherDB {
 	public synchronized static CoolWeatherDB getInstance(Context context){
 		if (coolWeatherDB == null) {
 			coolWeatherDB = new CoolWeatherDB(context);
+			
 		}
 		return coolWeatherDB;
 	}
@@ -116,7 +117,7 @@ public class CoolWeatherDB {
 		if (cursor.moveToFirst()) {
 			do {
 				City city = new City();
-				city.setId(cursor.getInt(cursor.getColumnIndex("city_id")));
+				city.setId(cursor.getInt(cursor.getColumnIndex("id")));
 				city.setCityName(cursor.getString(cursor.getColumnIndex("city_name")));
 				city.setCityCode(cursor.getString(cursor.getColumnIndex("city_code")));
 				city.setProvinceId(provinceId);
@@ -150,7 +151,7 @@ public class CoolWeatherDB {
 		if (cursor.moveToFirst()) {
 			do {
 				County county = new County();
-				county.setId(cursor.getInt(cursor.getColumnIndex("county_id")));
+				county.setId(cursor.getInt(cursor.getColumnIndex("id")));
 				county.setCountyName(cursor.getString(cursor.getColumnIndex("county_name")));
 				county.setCountyCode(cursor.getString(cursor.getColumnIndex("county_code")));
 				county.setCityId(cityId);
