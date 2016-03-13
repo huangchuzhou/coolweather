@@ -5,7 +5,10 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -52,6 +55,15 @@ public class ChooseAreaActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.choose_area);
+		
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		if (sharedPreferences.getBoolean("city_selected", false)) {
+			Intent intent =new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+			startActivity(intent);
+			finish();
+			return;
+		}
+		
 		title_text = (TextView)findViewById(R.id.title_text);
 		list_view = (ListView)findViewById(R.id.list_view);
 		adapter = new ArrayAdapter<String>(ChooseAreaActivity.this, android.R.layout.simple_list_item_1, dataList);
@@ -68,6 +80,12 @@ public class ChooseAreaActivity extends Activity {
 				}else if(currentLevel == LEVEL_CITY) {
 					selectedcCity = cityList.get(position);
 					queryCounties();
+				}else if (currentLevel == LEVEL_COUNTY) {
+					String countyCode = countyList.get(position).getCountyCode();
+					Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+					intent.putExtra("county_code", countyCode);
+					startActivity(intent);
+					finish();
 				}
 			}
 			
@@ -92,7 +110,7 @@ public class ChooseAreaActivity extends Activity {
 			title_text.setText("中国");
 			currentLevel = LEVEL_PROVINCE;
 		}else {
-			querFromService(null,"province");
+			queryFromService(null,"province");
 		}
 	}
 	/**
@@ -110,7 +128,7 @@ public class ChooseAreaActivity extends Activity {
 			list_view.setSelection(0);
 			title_text.setText(selectedProvince.getProvinceName());
 		}else {
-			querFromService(selectedProvince.getProvinceCode(), "city");
+			queryFromService(selectedProvince.getProvinceCode(), "city");
 		}
 	}
 	/**
@@ -128,13 +146,13 @@ public class ChooseAreaActivity extends Activity {
 			list_view.setSelection(0);
 			title_text.setText(selectedcCity.getCityName());
 		}else {
-			querFromService(selectedcCity.getCityCode(), "county");
+			queryFromService(selectedcCity.getCityCode(), "county");
 		}
 	}
 	/**
 	 * 根据传入的代号和类型从服务器上查询省市县数据
 	 */
-	public void querFromService(String code,final String type){
+	private void queryFromService(String code,final String type){
 		String address;
 		if (!TextUtils.isEmpty(code)) {
 			address = "http://www.weather.com.cn/data/list3/city"+code+".xml";
