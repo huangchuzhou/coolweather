@@ -30,7 +30,7 @@ public class Utility {
 	 */
 	public synchronized static boolean handleProvinceResponce(CoolWeatherDB coolWeatherDB,String responce){
 		//TextUtile.isEmpty 这个方法传入的参数无论是null 或者是“”都会返回一个true;
-		if (TextUtils.isEmpty(responce)) {
+		if (!TextUtils.isEmpty(responce)) {
 			
 			//String 的spilt方法是按格式用于分割字符串并返回一个字符串数组
 			String[] allProvinces = responce.split(",");
@@ -53,7 +53,7 @@ public class Utility {
 	 * 解释和处理服务器返回的城市数据
 	 */
 	public synchronized static boolean handlerCityResponce(CoolWeatherDB coolWeatherDB,String responce,int provinceId){
-		if (TextUtils.isEmpty(responce)) {
+		if (!TextUtils.isEmpty(responce)) {
 			String[] allCities = responce.split(",");
 			if (allCities != null && allCities.length >0) {
 				
@@ -75,12 +75,12 @@ public class Utility {
 	 * 解释和处理服务器返回的县数据
 	 */
 	public synchronized static boolean handlerCountyResponce(CoolWeatherDB coolWeatherDB,String responce,int cityId){
-		if (TextUtils.isEmpty(responce)) {
+		if (!TextUtils.isEmpty(responce)) {
 			String[] allCounties = responce.split(","); 
 			if (allCounties != null && allCounties.length >0) {
 				
 				for (String p : allCounties) {
-					String[] arrays = p.split("|");
+					String[] arrays = p.split("\\|");
 					County county = new County();
 					county.setCountyCode(arrays[0]);
 					county.setCountyName(arrays[1]);
@@ -127,7 +127,7 @@ public class Utility {
 		editor.putString("temp2", temp2);
 		editor.putString("weather_desp", weatherDesp);
 		editor.putString("publish_time", publishTime);
-		editor.putString("current_data", simpleDateFormat.format(new Date()));
+		editor.putString("current_date", simpleDateFormat.format(new Date()));
 		editor.commit();
 	}
 }

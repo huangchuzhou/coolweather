@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -50,14 +51,19 @@ public class ChooseAreaActivity extends Activity {
 	//选中的城市
 	private City selectedcCity;
 	
+	//是否从weatherActivity中跳转过来的
+	private boolean isFomWeatherActivity;
+	
 	private List<String> dataList = new ArrayList<String>();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.choose_area);
-		
+		isFomWeatherActivity = getIntent().getBooleanExtra("from_weather_activity", false);
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		if (sharedPreferences.getBoolean("city_selected", false)) {
+		
+		//已经选择了城市且不是从weatherActivity跳转过来的，才会直接跳转到weatherActivity
+		if (sharedPreferences.getBoolean("city_selected", false) && !isFomWeatherActivity) {
 			Intent intent =new Intent(ChooseAreaActivity.this,WeatherActivity.class);
 			startActivity(intent);
 			finish();
@@ -108,6 +114,7 @@ public class ChooseAreaActivity extends Activity {
 			adapter.notifyDataSetChanged();
 			list_view.setSelection(0);
 			title_text.setText("中国");
+			title_text.setTextColor(Color.BLACK);
 			currentLevel = LEVEL_PROVINCE;
 		}else {
 			queryFromService(null,"province");
@@ -222,7 +229,12 @@ public class ChooseAreaActivity extends Activity {
 			queryCities();
 		}else if (currentLevel == LEVEL_CITY) {
 			queryProvinces();
-		}else {
+		}
+		else {
+			if(isFomWeatherActivity){
+				Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+				startActivity(intent);
+			}
 			finish();
 		}
 	}
